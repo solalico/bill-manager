@@ -1,17 +1,40 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { deleteReminder } from '../actions';
 
 class billRow extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      bills: [],
+      total: 0
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({bills: nextProps.bills})
+    this.setState({total: nextProps.total})
+  }
+
+  deleteReminder(id) {
+    this.props.deleteReminder(id);
+  }
 
   render() {
-    const bills = this.props.bills;
-    console.log('In bill', bills);
+    const {bills, total} = this.state;
     return (
       <table className="table-striped table-bordered table-condensed table-hover">
         <thead>
           <tr>
             <th>
               Amount
+            </th>
+            <th>
+              PaidBy
+            </th>
+            <th>
+              Obligors
             </th>
             <th>
               Description
@@ -30,6 +53,14 @@ class billRow extends Component {
                       <div className="wordWrap">{reminder.amount}</div>
                     </td>
                     <td>
+                      <div className="wordWrap">{reminder.paidBy}</div>
+                    </td>
+                    <td>
+                      <div className="wordWrap">{
+                          reminder.obligors.toString()
+                        }</div>
+                    </td>
+                    <td>
                       <div className="wordWrap">{reminder.description}</div>
                     </td>
                     <td
@@ -41,6 +72,14 @@ class billRow extends Component {
                 )
               })
             }
+            <tr key="lastRow">
+              <td colSpan="4">
+                <div className="wordWrap">Total</div>
+              </td>
+              <td>
+                <div className="wordWrap">{total}</div>
+              </td>
+            </tr>
         </tbody>
       </table>
     )
@@ -49,8 +88,13 @@ class billRow extends Component {
 
 function mapStateToProps(state) {
   return {
-    bills: state.bills
+    bills: state.bills,
+    total: state.total
   }
 }
 
-export default connect(mapStateToProps, null)(billRow);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({deleteReminder}, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(billRow);
