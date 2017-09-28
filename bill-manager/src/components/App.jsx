@@ -14,9 +14,9 @@ class App extends Component {
       total: 0,
       paidBy: '',
       obligors: [],
-      d2RGU: 0,
-      d2EVA: 0,
-      RGU2EVA: 0
+      d2RGU: 0.00,
+      d2EVA: 0.00,
+      RGU2EVA: 0.00
     }
   }
 

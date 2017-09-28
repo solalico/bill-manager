@@ -14,10 +14,10 @@ const reminder = (action) => {
 
 const initialState = {
   bills: [],
-  total: 0,
-  d2RGU: 0,
-  d2EVA: 0,
-  RGU2EVA: 0
+  total: '0.00',
+  d2RGU: '0.00',
+  d2EVA: '0.00',
+  RGU2EVA: '0.00'
 }
 
 const getCookie = () => {
@@ -137,8 +137,8 @@ const reminders = (state = initialState, action) => {
       reminders.bills = [...cookie.bills];
       reminders.total = cookie.total;
       reminders.d2RGU = cookie.d2RGU;
-      reminders.d2EVA = cookie.d2RGU;
-      reminders.RGU2EVA = cookie.d2RGU;
+      reminders.d2EVA = cookie.d2EVA;
+      reminders.RGU2EVA = cookie.RGU2EVA;
       return reminders;
     default:
       return state;
