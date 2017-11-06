@@ -1,33 +1,46 @@
-import { ADD_REMINDER, DELETE_REMINDER, CLEAR_REMINDERS, RETRIEVE }  from '../constants';
+import { ADD_REMINDER, DELETE_REMINDER, CLEAR_REMINDERS, SIGNED_IN }  from '../constants';
 
-export const addReminder = (amount, description, paidBy, obligors) => {
+export const addReminder = (amount, description, paidBy, obligors, RefKey) => {
   const action = {
     type: ADD_REMINDER,
     amount,
     description,
     paidBy,
-    obligors
+    obligors,
+    RefKey
   }
   return action;
 }
 
-export const deleteReminder = (id) => {
+export const retrieveRecords = (historyRecords) => {
+  const action = {
+    type: "RETRIEVE",
+    historyRecords
+  }
+  return action;
+}
+
+export const switchRecord = (object) => {
+  const action = {
+    type: "SWITCH",
+    object
+  }
+  return action;
+}
+
+export const deleteReminder = (id, RefKey) => {
   const action = {
     type: DELETE_REMINDER,
-    id
+    id,
+    RefKey
   }
   return action;
 }
 
-export const retrieve = () => {
+export const logUser = (email) => {
   const action = {
-    type: RETRIEVE
+    type: SIGNED_IN,
+    email
   }
   return action;
-}
-
-export const clearReminders = () => {
-  return {
-    type: CLEAR_REMINDERS
-  }
 }
