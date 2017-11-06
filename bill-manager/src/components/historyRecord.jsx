@@ -35,7 +35,8 @@ class HistoryRecord extends Component {
       modalIsOpen: false,
       newFrom: '',
       newTo: '',
-      RefKey: ''
+      RefKey: '',
+      warning: false
     }
 
     this.openModal = this.openModal.bind(this);
@@ -44,6 +45,8 @@ class HistoryRecord extends Component {
     this.handleTab = this.handleTab.bind(this);
     this.deleteRecord = this.deleteRecord.bind(this);
     this.sortHistory = this.sortHistory.bind(this);
+    this.sortHistory = this.validateDate.bind(this);
+    this.sortHistory = this.setWarning.bind(this);
   }
 
   openModal() {
@@ -64,6 +67,27 @@ class HistoryRecord extends Component {
     temp.to = this.state.newTo;
     billRef.push(temp);
     this.closeModal();
+  }
+
+  setWarning() {
+    if (!!this.state.newFrom && !!this.state.newTo && this.state.newFrom > this.state.newTo) {
+      this.setState({warning: true});
+    } else {
+      this.setState({warning: false});
+    }
+  }
+
+  validateDate(option, value) {
+    console.log(option, value);
+    if (option === 'from') {
+      this.setState({newFrom: value}, function() {
+        this.setWarning();
+      });
+    } else {
+      this.setState({newTo: value}, function() {
+        this.setWarning();
+      });
+    }
   }
 
   sortHistory(historyRecords) {
@@ -89,7 +113,6 @@ class HistoryRecord extends Component {
       this.sortHistory(historyRecords);
       this.setState({historyRecords});
       if (id === undefined && historyRecords.length !== 0) {
-        console.log(historyRecords.length);
         this.props.switchRecord(historyRecords[0]);
       }
     });
@@ -169,14 +192,17 @@ class HistoryRecord extends Component {
             <input
               className="form-control"
               type="date"
-              onChange={event => this.setState({newFrom: event.target.value})}
+              onChange={event => this.validateDate('from', event.target.value)}
             />
-            <label>From</label>
+          <label>to</label>
             <input
               className="form-control"
               type="date"
-              onChange={event => this.setState({newTo: event.target.value})}
+              onChange={event => this.validateDate('to', event.target.value)}
             />
+          {
+              this.state.warning ? <div>End date must greater than start date.</div> : null
+          }
             <div className="buttonGroup">
               <div
                 className="btn btn-danger btncenter"
@@ -184,12 +210,24 @@ class HistoryRecord extends Component {
                 >
                 Close
               </div>
-              <button
-                className="btn btn-success btncenter marginLeft"
-                onClick={() => this.save()}
-                >
-                Save
-              </button>
+              {
+                !this.state.warning ?
+                <button
+                  className="btn btn-success btncenter marginLeft"
+                  onClick={() => this.save()}
+                  >
+                  Save
+                </button>
+                :
+                <button
+                  className="btn btn-success btncenter marginLeft"
+                  onClick={() => {}}
+                  disabled
+                  >
+                  Save
+                </button>
+              }
+
             </div>
           </form>
         </Modal>

@@ -1,5 +1,5 @@
-import { ADD_REMINDER, DELETE_REMINDER, CLEAR_REMINDERS, SIGNED_IN } from '../constants';
-import { dbRef, billRef } from '../firebase';
+import { ADD_REMINDER, DELETE_REMINDER, SIGNED_IN } from '../constants';
+import { dbRef } from '../firebase';
 const reminder = (action) => {
   let { amount, description, paidBy, obligors } = action;
   return {
