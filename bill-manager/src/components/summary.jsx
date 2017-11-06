@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { deleteReminder } from '../actions';
 import { ListGroup, ListGroupItem } from 'react-bootstrap';
 
 class Summary extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      d2RGU: 0,
-      d2EVA: 0,
-      RGU2EVA: 0
+      d2RGU: '0.00',
+      d2EVA: '0.00',
+      RGU2EVA: '0.00'
     }
   }
 

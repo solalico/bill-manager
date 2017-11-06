@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addReminder, retrieve, clearReminders } from '../actions';
+import classnames from 'classnames';
+import { addReminder } from '../actions';
+import { firebaseApp } from '../firebase';
 // import moment from 'moment';
 import Billrow from './billRow';
 import Summary from './summary'
@@ -11,23 +13,20 @@ class App extends Component {
     this.state = {
       amount: '',
       description: '',
-      total: 0,
       paidBy: '',
       obligors: [],
-      d2RGU: 0.00,
-      d2EVA: 0.00,
-      RGU2EVA: 0.00
+      email: '',
+      RefKey: ''
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({d2RGU: nextProps.d2RGU});
-    this.setState({d2EVA: nextProps.d2EVA});
-    this.setState({RGU2EVA: nextProps.RGU2EVA});
+    this.setState({email: nextProps.email});
+    this.setState({RefKey: nextProps.RefKey});
   }
 
-  retrieve() {
-    this.props.retrieve();
+  signOut() {
+    firebaseApp.auth().signOut();
   }
 
   clearState() {
@@ -39,7 +38,7 @@ class App extends Component {
 
   addReminder() {
     if (!this.state.amount || this.state.obligors.length === 0) return;
-    this.props.addReminder(this.state.amount, this.state.description, this.state.paidBy, this.state.obligors);
+    this.props.addReminder(this.state.amount, this.state.description, this.state.paidBy, this.state.obligors, this.props.RefKey);
     this.clearState();
   }
 
@@ -66,10 +65,16 @@ class App extends Component {
   }
 
   render() {
+    const togglebarClasses = classnames({
+      'appSidebarOpen': this.props.toggleBar,
+      'aPPSidebarClose': !this.props.toggleBar,
+      'App': true
+    });
+    const { email } = this.props;
     return (
-      <div className="App">
+      <div className={togglebarClasses}>
         <div className="title">
-          Bill Manager
+           Welcome to Bill Manager! Account: {email}
         </div>
         <div className="form-inline reminder-form">
           <div className="form-group">
@@ -120,35 +125,34 @@ class App extends Component {
         <Billrow/>
         <div className="buttonGroup">
           <div
-            className="btn btn-danger btncenter"
-            onClick={() => this.props.clearReminders()}
+            className="btn btn-success btncenter"
+            onClick={() => {alert('D是不是最帅！')}}
             >
-            Clear Records
+            别点我
           </div>
-          <div
-            className="btn btn-success marginLeft btncenter"
-            onClick={() => this.props.retrieve()}
+          <button
+            className="btn btn-danger btncenter marginLeft"
+            onClick={() => this.signOut()}
             >
-            Retrieve Records
-          </div>
+            Sign Out
+          </button>
         </div>
-        <Summary/>
+        <Summary />
       </div>
     )
   }
 }
 
 function mapStateToProps(state) {
+  const { RefKey, email } = state;
   return {
-    bills: state.bills,
-    d2RGU: state.d2RGU,
-    d2EVA: state.d2EVA,
-    RGU2EVA: state.RGU2EVA
-  }
+    RefKey: state.RefKey,
+    email: state.email
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({addReminder, retrieve, clearReminders}, dispatch);
+  return bindActionCreators({addReminder}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

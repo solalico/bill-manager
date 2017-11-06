@@ -8,13 +8,13 @@ class billRow extends Component {
     super(props);
     this.state = {
       bills: [],
-      total: 0
+      total: '0.00'
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({bills: nextProps.bills})
-    this.setState({total: nextProps.total})
+    this.setState({bills: nextProps.bills});
+    this.setState({total: nextProps.total});
   }
 
   deleteReminder(id) {
@@ -22,7 +22,12 @@ class billRow extends Component {
   }
 
   render() {
-    const {bills, total} = this.state;
+    const { total } = this.state;
+    const tempBill = this.state.bills;
+    let bills = [];
+    tempBill.forEach((bill)=> {
+      bills.push(bill);
+    });
     return (
       <table className="table-striped table-bordered table-condensed table-hover">
         <thead>
@@ -46,9 +51,9 @@ class billRow extends Component {
         </thead>
         <tbody>
             {
-              bills.map(reminder => {
+              bills.map((reminder, index) => {
                 return (
-                  <tr key={reminder.id}>
+                  <tr key={index}>
                     <td>
                       <div className="wordWrap">{reminder.amount}</div>
                     </td>
@@ -64,7 +69,7 @@ class billRow extends Component {
                       <div className="wordWrap">{reminder.description}</div>
                     </td>
                     <td
-                      onClick={() => this.deleteReminder(reminder.id)}
+                      onClick={() => this.deleteReminder(index)}
                       >
                       &#x2715;
                     </td>

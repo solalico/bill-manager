@@ -1,10 +1,8 @@
-import { ADD_REMINDER, DELETE_REMINDER, CLEAR_REMINDERS, RETRIEVE } from '../constants';
-import { bake_cookie, read_cookie } from 'sfcookies';
-
+import { ADD_REMINDER, DELETE_REMINDER, CLEAR_REMINDERS, SIGNED_IN } from '../constants';
+import { dbRef, billRef } from '../firebase';
 const reminder = (action) => {
   let { amount, description, paidBy, obligors } = action;
   return {
-    id: Math.random(),
     amount,
     description,
     paidBy,
@@ -14,17 +12,14 @@ const reminder = (action) => {
 
 const initialState = {
   bills: [],
+  RefKey: '',
   total: '0.00',
   d2RGU: '0.00',
   d2EVA: '0.00',
-  RGU2EVA: '0.00'
-}
-
-const getCookie = () => {
-  if (read_cookie('bills')) {
-    return read_cookie('bills');
-  }
-  return initialState;
+  RGU2EVA: '0.00',
+  email: null,
+  from: '',
+  to: ''
 }
 
 const performAdding = (reminders, action) => {
@@ -66,79 +61,75 @@ const performAdding = (reminders, action) => {
 const removeById = (state, id) => {
   let reminders = {...state};
   reminders.bills = [...state.bills];
-  for (let i = 0; i < reminders.bills.length; i++) {
-    if (reminders.bills[i].id === id) {
-      let bill = reminders.bills[i];
-      let split = (Math.round(bill.amount/bill.obligors.length * 100)/100).toFixed(2);
-      switch(bill.paidBy) {
-        case 'D': {
-          if (bill.obligors.includes('RGU')) {
-            reminders.d2RGU = (Number(reminders.d2RGU) + Number(split)).toFixed(2);
-          }
-          if (bill.obligors.includes('EVA')) {
-            reminders.d2EVA = (Number(reminders.d2EVA) + Number(split)).toFixed(2);
-          }
-          break;
-        }
-        case 'RGU': {
-          if (bill.obligors.includes('D')) {
-            reminders.d2RGU = (reminders.d2RGU - split).toFixed(2);
-          }
-          if (bill.obligors.includes('EVA')) {
-            reminders.RGU2EVA = (Number(reminders.RGU2EVA) + Number(split)).toFixed(2);
-          }
-          break;
-        }
-        case 'EVA': {
-          if (bill.obligors.includes('D')) {
-            reminders.d2EVA = (reminders.d2EVA - split).toFixed(2);
-          }
-          if (bill.obligors.includes('RGU')) {
-            reminders.RGU2EVA = (reminders.RGU2EVA - split).toFixed(2);
-          }
-          break;
-        }
-        default: break;
+  let bill = reminders.bills[id];
+  let split = (Math.round(bill.amount/bill.obligors.length * 100)/100).toFixed(2);
+  switch(bill.paidBy) {
+    case 'D': {
+      if (bill.obligors.includes('RGU')) {
+        reminders.d2RGU = (Number(reminders.d2RGU) + Number(split)).toFixed(2);
       }
-      reminders.total = (reminders.total - bill.amount).toFixed(2);
-      reminders.bills.splice(i, 1);
+      if (bill.obligors.includes('EVA')) {
+        reminders.d2EVA = (Number(reminders.d2EVA) + Number(split)).toFixed(2);
+      }
+      break;
     }
+    case 'RGU': {
+      if (bill.obligors.includes('D')) {
+        reminders.d2RGU = (reminders.d2RGU - split).toFixed(2);
+      }
+      if (bill.obligors.includes('EVA')) {
+        reminders.RGU2EVA = (Number(reminders.RGU2EVA) + Number(split)).toFixed(2);
+      }
+      break;
+    }
+    case 'EVA': {
+      if (bill.obligors.includes('D')) {
+        reminders.d2EVA = (reminders.d2EVA - split).toFixed(2);
+      }
+      if (bill.obligors.includes('RGU')) {
+        reminders.RGU2EVA = (reminders.RGU2EVA - split).toFixed(2);
+      }
+      break;
+    }
+    default: break;
   }
-
+  reminders.total = (reminders.total - bill.amount).toFixed(2);
+  reminders.bills.splice(id, 1);
   return reminders;
 }
 
 const reminders = (state = initialState, action) => {
   let reminders = null;
+  let url;
   switch(action.type) {
     case ADD_REMINDER:
       reminders = {...state};
       reminders.bills = [...state.bills, (reminder(action))];
       performAdding(reminders, action);
-      bake_cookie('bills', reminders);
+      url = 'bills/' + reminders.RefKey;
+      dbRef.ref(url).set(reminders);
       return reminders;
     case DELETE_REMINDER:
       reminders = removeById(state, action.id, action.amount);
-      bake_cookie('bills', reminders);
+      url = 'bills/' + reminders.RefKey;
+      dbRef.ref(url).set(reminders);
       return reminders;
-    case CLEAR_REMINDERS:
+    case SIGNED_IN:
+      const { email } = action;
       reminders = {...state};
-      reminders.bills = [];
-      reminders.total = 0;
-      reminders.d2RGU = 0;
-      reminders.d2EVA = 0;
-      reminders.RGU2EVA = 0;
-      bake_cookie('bills', reminders);
+      reminders.email = email;
       return reminders;
-    case RETRIEVE:
+    case 'SWITCH':
+      const { object } = action;
       reminders = {...state};
-      let cookie = getCookie();
-      console.log(cookie);
-      reminders.bills = [...cookie.bills];
-      reminders.total = cookie.total;
-      reminders.d2RGU = cookie.d2RGU;
-      reminders.d2EVA = cookie.d2EVA;
-      reminders.RGU2EVA = cookie.RGU2EVA;
+      reminders.total = object.total;
+      reminders.d2RGU = object.d2RGU;
+      reminders.d2EVA = object.d2EVA;
+      reminders.RGU2EVA = object.RGU2EVA;
+      reminders.from = object.from;
+      reminders.to = object.to;
+      reminders.bills = object.bills || [];
+      reminders.RefKey = object.RefKey;
       return reminders;
     default:
       return state;
