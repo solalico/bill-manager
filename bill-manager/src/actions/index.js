@@ -1,4 +1,4 @@
-import { ADD_REMINDER, DELETE_REMINDER, CLEAR_REMINDERS, SIGNED_IN }  from '../constants';
+import { ADD_REMINDER, DELETE_REMINDER, SIGNED_IN }  from '../constants';
 
 export const addReminder = (amount, description, paidBy, obligors, RefKey) => {
   const action = {
