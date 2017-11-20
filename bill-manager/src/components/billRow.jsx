@@ -29,7 +29,7 @@ class billRow extends Component {
       bills.push(bill);
     });
     return (
-      <table className="table-striped table-bordered table-condensed table-hover">
+      <table className="billTable table-striped table-bordered table-condensed table-hover">
         <thead>
           <tr>
             <th>
