@@ -190,7 +190,7 @@ class HistoryRecord extends Component {
                           <div className="record">{date}</div>
                           <button
                             className="btn btn-danger btncenter recordRowDelete"
-                            onClick={() => this.openDeleteModal(record)}
+                            onClick={() => this.openDeleteModal(index)}
                             >
                             Delete
                           </button>
