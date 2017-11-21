@@ -120,6 +120,7 @@ const reminders = (state = initialState, action) => {
       reminders.email = email;
       return reminders;
     case 'SWITCH':
+      console.log('happend');
       const { object } = action;
       reminders = {...state};
       reminders.total = object.total;
@@ -130,6 +131,13 @@ const reminders = (state = initialState, action) => {
       reminders.to = object.to;
       reminders.bills = object.bills || [];
       reminders.RefKey = object.RefKey;
+      return reminders;
+    case 'DELETERECORD':
+      const { RefKey } = action;
+      reminders = {...state};
+      if (reminders.RefKey === RefKey) {
+        reminders.RefKey = '';
+      }
       return reminders;
     default:
       return state;

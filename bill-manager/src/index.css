@@ -237,6 +237,14 @@ td {
   width: 30%;
 }
 
+table {
+  border-collapse: collapse !important;
+}
+
+.billTable th {
+  border: 0px !important;
+}
+
 .billTable tbody {
   display:block;
   overflow: auto;
@@ -249,6 +257,16 @@ td {
   table-layout: fixed;
 }
 
-.billTable thead {
+.billTable th {
   width: calc( 100% - 1em );
+  border-top: 10px solid red;
+}
+
+.noRecord {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  margin-top: 20%;
+  color: #6600ff;
+  font-size: 26px;
 }

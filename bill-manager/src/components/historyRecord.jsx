@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { retrieveRecords, switchRecord } from '../actions';
+import { retrieveRecords, switchRecord, deleteRecords } from '../actions';
 import { dbRef, billRef } from '../firebase';
 import { Tab, Row, Col, Nav, NavItem } from 'react-bootstrap';
 import Modal from 'react-modal';
@@ -36,12 +36,17 @@ class HistoryRecord extends Component {
       newFrom: '',
       newTo: '',
       RefKey: '',
-      warning: false
+      warning: false,
+      deleteModalOpen: false,
+      readyToDelete: ''
     }
 
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.openDeleteModal = this.openDeleteModal.bind(this);
+    this.afterOpenDeleteModal = this.afterOpenDeleteModal.bind(this);
+    this.closeDeleteModal = this.closeDeleteModal.bind(this);
     this.handleTab = this.handleTab.bind(this);
     this.deleteRecord = this.deleteRecord.bind(this);
     this.sortHistory = this.sortHistory.bind(this);
@@ -49,8 +54,9 @@ class HistoryRecord extends Component {
     this.sortHistory = this.setWarning.bind(this);
   }
 
-  openModal() {
+  openModal(index) {
     this.setState({modalIsOpen: true});
+    this.setState({readyToDelete: this.state.historyRecords[index].RefKey});
   }
 
   afterOpenModal() {
@@ -59,6 +65,22 @@ class HistoryRecord extends Component {
 
   closeModal() {
     this.setState({modalIsOpen: false});
+  }
+
+  openDeleteModal() {
+    this.setState({deleteModalOpen: true});
+  }
+
+  afterOpenDeleteModal() {
+    this.subtitle.style.color = '#foo';
+  }
+
+  closeDeleteModal() {
+    this.setState({deleteModalOpen: false});
+  }
+
+  confirm() {
+    this.deleteRecord(this.state.readyToDelete);
   }
 
   save() {
@@ -78,7 +100,6 @@ class HistoryRecord extends Component {
   }
 
   validateDate(option, value) {
-    console.log(option, value);
     if (option === 'from') {
       this.setState({newFrom: value}, function() {
         this.setWarning();
@@ -107,7 +128,7 @@ class HistoryRecord extends Component {
         temp[key].RefKey = key;
         historyRecords.push(temp[key]);
         if (this.state.RefKey === key) {
-          id = index;
+          id = key;
         }
       });
       this.sortHistory(historyRecords);
@@ -123,6 +144,9 @@ class HistoryRecord extends Component {
   }
 
   handleTab(index) {
+    if (arguments[1].target.nodeName === 'BUTTON') {
+      return;
+    };
     this.props.switchRecord(this.state.historyRecords[index]);
   }
 
@@ -130,12 +154,13 @@ class HistoryRecord extends Component {
     this.openModal();
   }
 
-  deleteRecord(record) {
-    const url = 'bills/' + record.RefKey;
+  deleteRecord(RefKey) {
+    const url = 'bills/' + RefKey;
     dbRef.ref(url).remove();
     if (this.state.historyRecords.length === 1) {
       this.setState({historyRecords: []});
     }
+    this.props.deleteRecords(RefKey);
   }
 
   render() {
@@ -160,12 +185,12 @@ class HistoryRecord extends Component {
                   historyRecords.map((record, index) => {
                     const date = record.from.replace(new RegExp('-', 'g'), '/') + ' - ' + record.to.replace(new RegExp('-', 'g'), '/');
                     return (
-                      <NavItem className="recordRowBorder" activeKey={index} key={index} eventKey={index}>
+                      <NavItem className="recordRowBorder" activeKey={index} key={index} eventKey={ index }>
                         <div className="recordRow">
                           <div className="record">{date}</div>
                           <button
                             className="btn btn-danger btncenter recordRowDelete"
-                            onClick={() => this.deleteRecord(record)}
+                            onClick={() => this.openDeleteModal(record)}
                             >
                             Delete
                           </button>
@@ -231,6 +256,31 @@ class HistoryRecord extends Component {
             </div>
           </form>
         </Modal>
+        <Modal
+          isOpen={this.state.deleteModalOpen}
+          onAfterOpen={this.afterOpenDeleteModal}
+          onRequestClose={this.closeDeleteModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+        >
+          <h2 ref={subtitle => this.subtitle = subtitle}>You sure you want to delete this?</h2>
+          <form>
+            <div className="buttonGroup">
+              <div
+                className="btn btn-danger btncenter"
+                onClick={() => this.closeDeleteModal()}
+                >
+                Cancel
+              </div>
+              <button
+                className="btn btn-success btncenter marginLeft"
+                onClick={() => this.confirm()}
+                >
+                Delete
+              </button>
+            </div>
+          </form>
+        </Modal>
       </div>
     )
   }
@@ -243,7 +293,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({retrieveRecords, switchRecord}, dispatch);
+  return bindActionCreators({retrieveRecords, switchRecord, deleteRecords}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HistoryRecord);

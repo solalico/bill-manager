@@ -71,74 +71,78 @@ class App extends Component {
       'App': true
     });
     const { email } = this.props;
+    const { RefKey } = this.state;
     return (
-      <div className={togglebarClasses}>
-        <div className="title">
-           Welcome to Bill Manager! Account: {email}
-        </div>
-        <div className="form-inline reminder-form">
-          <div className="form-group">
-            <input id="amount"
-              type="number"
+        RefKey ?
+        <div className={togglebarClasses}>
+          <div className="title">
+             Welcome to Bill Manager! Account: {email}
+          </div>
+          <div className="form-inline reminder-form">
+            <div className="form-group">
+              <input id="amount"
+                type="number"
+                className="form-control"
+                placeholder="The amount is..."
+                onChange={event => this.setState({amount: event.target.value})}
+              />
+            <input id="des"
               className="form-control"
-              placeholder="The amount is..."
-              onChange={event => this.setState({amount: event.target.value})}
+              placeholder="This was for..."
+              onChange={event => this.setState({description: event.target.value})}
             />
-          <input id="des"
-            className="form-control"
-            placeholder="This was for..."
-            onChange={event => this.setState({description: event.target.value})}
-          />
+            </div>
+            <button
+              type="button"
+              className="btn btn-success marginLeft"
+              onClick={() => this.addReminder()}
+            >Add Records</button>
           </div>
-          <button
-            type="button"
-            className="btn btn-success marginLeft"
-            onClick={() => this.addReminder()}
-          >Add Records</button>
+          <div className="form-group marginBoth5" id="D">
+            <div className="radio-group">
+              <div className="radio-group marginBoth5 memberTitle">PaidBy:</div>
+              <div className={this.isActive('D')} onClick={() => this.switchPayer('D')}>
+                <div className="marginBoth5">D</div>
+              </div>
+              <div className={this.isActive('RGU')} id="RGU">
+                <div className="marginBoth5" onClick={() => this.switchPayer('RGU')}>RGU</div>
+              </div>
+              <div className={this.isActive('EVA')} id="EVA">
+                <div className="marginBoth5" onClick={() => this.switchPayer('EVA')}>EVA</div>
+              </div>
+            </div>
+            <div className="radio-group">
+              <div className="radio-group marginBoth5 memberTitle">Obligor: </div>
+              <div className={this.isActiveObligor('D')} onClick={() => this.toggleMember('D')}>
+                <div className="marginBoth5">D</div>
+              </div>
+              <div className={this.isActiveObligor('RGU')} id="RGU">
+                <div className="marginBoth5" onClick={() => this.toggleMember('RGU')}>RGU</div>
+              </div>
+              <div className={this.isActiveObligor('EVA')} id="EVA">
+                <div className="marginBoth5" onClick={() => this.toggleMember('EVA')}>EVA</div>
+              </div>
+            </div>
+          </div>
+          <Billrow/>
+          <div className="buttonGroup">
+            <div
+              className="btn btn-success btncenter"
+              onClick={() => {alert('D是不是最帅！')}}
+              >
+              别点我
+            </div>
+            <button
+              className="btn btn-danger btncenter marginLeft"
+              onClick={() => this.signOut()}
+              >
+              Sign Out
+            </button>
+          </div>
+          <Summary />
         </div>
-        <div className="form-group marginBoth5" id="D">
-          <div className="radio-group">
-            <div className="radio-group marginBoth5 memberTitle">PaidBy:</div>
-            <div className={this.isActive('D')} onClick={() => this.switchPayer('D')}>
-              <div className="marginBoth5">D</div>
-            </div>
-            <div className={this.isActive('RGU')} id="RGU">
-              <div className="marginBoth5" onClick={() => this.switchPayer('RGU')}>RGU</div>
-            </div>
-            <div className={this.isActive('EVA')} id="EVA">
-              <div className="marginBoth5" onClick={() => this.switchPayer('EVA')}>EVA</div>
-            </div>
-          </div>
-          <div className="radio-group">
-            <div className="radio-group marginBoth5 memberTitle">Obligor: </div>
-            <div className={this.isActiveObligor('D')} onClick={() => this.toggleMember('D')}>
-              <div className="marginBoth5">D</div>
-            </div>
-            <div className={this.isActiveObligor('RGU')} id="RGU">
-              <div className="marginBoth5" onClick={() => this.toggleMember('RGU')}>RGU</div>
-            </div>
-            <div className={this.isActiveObligor('EVA')} id="EVA">
-              <div className="marginBoth5" onClick={() => this.toggleMember('EVA')}>EVA</div>
-            </div>
-          </div>
-        </div>
-        <Billrow/>
-        <div className="buttonGroup">
-          <div
-            className="btn btn-success btncenter"
-            onClick={() => {alert('D是不是最帅！')}}
-            >
-            别点我
-          </div>
-          <button
-            className="btn btn-danger btncenter marginLeft"
-            onClick={() => this.signOut()}
-            >
-            Sign Out
-          </button>
-        </div>
-        <Summary />
-      </div>
+        :
+        <div className="noRecord">Please select or add new bill.</div>
     )
   }
 }

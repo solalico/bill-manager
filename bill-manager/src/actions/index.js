@@ -20,6 +20,14 @@ export const retrieveRecords = (historyRecords) => {
   return action;
 }
 
+export const deleteRecords = (RefKey) => {
+  const action = {
+    type: "DELETERECORD",
+    RefKey
+  }
+  return action;
+}
+
 export const switchRecord = (object) => {
   const action = {
     type: "SWITCH",
