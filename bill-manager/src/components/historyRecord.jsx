@@ -56,7 +56,6 @@ class HistoryRecord extends Component {
 
   openModal(index) {
     this.setState({modalIsOpen: true});
-    this.setState({readyToDelete: this.state.historyRecords[index].RefKey});
   }
 
   afterOpenModal() {
@@ -68,6 +67,7 @@ class HistoryRecord extends Component {
   }
 
   openDeleteModal() {
+    this.setState({readyToDelete: this.state.historyRecords[index].RefKey});
     this.setState({deleteModalOpen: true});
   }
 
