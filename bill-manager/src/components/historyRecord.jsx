@@ -134,7 +134,7 @@ class HistoryRecord extends Component {
       this.sortHistory(historyRecords);
       this.setState({historyRecords});
       if (id === undefined && historyRecords.length !== 0) {
-        this.props.switchRecord(historyRecords[0]);
+        this.props.switchRecord(this.state.historyRecords[0]);
       }
     });
   }
@@ -185,7 +185,7 @@ class HistoryRecord extends Component {
                   historyRecords.map((record, index) => {
                     const date = record.from.replace(new RegExp('-', 'g'), '/') + ' - ' + record.to.replace(new RegExp('-', 'g'), '/');
                     return (
-                      <NavItem className="recordRowBorder" activeKey={index} key={index} eventKey={ index }>
+                      <NavItem className="recordRowBorder" activeKey={ index } key={ index } eventKey={ index }>
                         <div className="recordRow">
                           <div className="record">{date}</div>
                           <button

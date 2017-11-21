@@ -72,6 +72,7 @@ class App extends Component {
     });
     const { email } = this.props;
     const { RefKey } = this.state;
+    console.log(RefKey);
     return (
         RefKey ?
         <div className={togglebarClasses}>

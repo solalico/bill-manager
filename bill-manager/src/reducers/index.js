@@ -120,8 +120,8 @@ const reminders = (state = initialState, action) => {
       reminders.email = email;
       return reminders;
     case 'SWITCH':
-      console.log('happend');
       const { object } = action;
+      console.log(object);
       reminders = {...state};
       reminders.total = object.total;
       reminders.d2RGU = object.d2RGU;

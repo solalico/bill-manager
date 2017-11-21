@@ -22,8 +22,8 @@ class billRow extends Component {
   }
 
   render() {
-    const { total } = this.state;
-    const tempBill = this.state.bills;
+    const { total } = this.props;
+    const tempBill = this.props.bills;
     let bills = [];
     tempBill.forEach((bill)=> {
       bills.push(bill);
