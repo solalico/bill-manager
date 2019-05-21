@@ -132,10 +132,11 @@ class HistoryRecord extends Component {
         }
       });
       this.sortHistory(historyRecords);
-      this.setState({historyRecords});
-      if (id === undefined && historyRecords.length !== 0) {
-        this.props.switchRecord(this.state.historyRecords[0]);
-      }
+      this.setState({historyRecords}, () => {
+        if (id === undefined && historyRecords.length !== 0) {
+          this.props.switchRecord(this.state.historyRecords[0]);
+        }
+      });
     });
   }
 
