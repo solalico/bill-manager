@@ -18,9 +18,9 @@ firebaseApp.auth().onAuthStateChanged(user => {
   if (user) {
     const { email } = user;
     store.dispatch(logUser(email));
-    browserHistory.push('/bill-claimer');
+    browserHistory.push('/bill-manager');
   } else {
-    browserHistory.replace('/signin');
+    browserHistory.replace('/bill-claimer');
   }
 })
 
