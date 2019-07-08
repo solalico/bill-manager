@@ -7,34 +7,42 @@ import { dbRef, billRef } from '../../../firebase';
 
 const pageData = {
   1: {
-    name: 'Brunch',
-    tax: 8,
-    tips: 18,
+    name: 'Quarterdeck',
+    tax: 7,
+    total: 248.32,
+    tips: {
+      type: '%',
+      value: 18
+    },
     share: [],
     src: p1,
     url: '',
   },
   2: {
-    name: '街边龙虾cafe',
-    tax: 8,
-    tips: 18,
+    name: 'Local 186',
+    tax: 7,
+    total: 356.67,
+    tips: {
+      type: 'fix',
+      value: 56
+    },
     share: [],
     src: p2,
     url: '',
   },
   3: {
-    name: 'Portland Oyster',
-    tax: 8,
-    tips: 18,
+    name: 'Lookout tarven',
+    tax: 7,
+    total: 322,
+    tips: {
+      type: '%',
+      value: 15.8
+    },
     url: '',
     share: [
       {
-        description: 'Oyster',
-        value: 87,
-      },
-      {
-        description: 'Clam bake',
-        value: 34,
+        description: 'Fried Cajun Oysters',
+        value: 22.95,
       },
     ],
     src: p3,
@@ -118,6 +126,7 @@ export default class HelloWorld extends Component {
   renderPage() {
       const {bill, page, name, modalOpen} = this.state
       const current = pageData[page]
+      const tips = current.tips.type === '%' ? current.tips.value : (current.tips.value / current.total * 100).toFixed(2)
       if (!current) return null
       if (modalOpen) {
         return (
@@ -155,7 +164,7 @@ export default class HelloWorld extends Component {
                {`Tax: ${current.tax}%`}
              </li>
              <li className="list-group-item">
-               {`Tips: ${current.tips}%`}
+               {`Tips: ${tips}%`}
              </li>
               {
                 current.share.map(item => {
@@ -316,7 +325,7 @@ export default class HelloWorld extends Component {
     })
     total = total.toFixed(2)
     const tax = (total * current.tax / 100).toFixed(2)
-    const tips = (total * current.tips / 100).toFixed(2)
+    const tips = (total * (current.tips.type === '%' ? current.tips.value : (current.tips.value / current.total * 100).toFixed(2)) / 100).toFixed(2)
     current.taxTotal = tax
     current.tipsTotal = tips
     current.total = total
