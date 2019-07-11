@@ -22,6 +22,7 @@ const pageData = {
     name: 'Local 186',
     tax: 7,
     total: 356.67,
+    before: 300.67,
     tips: {
       type: 'fix',
       value: 56
@@ -34,9 +35,10 @@ const pageData = {
     name: 'Lookout tarven',
     tax: 7,
     total: 322,
+    before: 253.10,
     tips: {
-      type: '%',
-      value: 15.8
+      type: 'fix',
+      value: 51.18
     },
     url: '',
     share: [
@@ -126,7 +128,7 @@ export default class HelloWorld extends Component {
   renderPage() {
       const {bill, page, name, modalOpen} = this.state
       const current = pageData[page]
-      const tips = current.tips.type === '%' ? current.tips.value : (current.tips.value / current.total * 100).toFixed(2)
+      const tips = current.tips.type === '%' ? current.tips.value : (current.tips.value / current.before * 100).toFixed(2)
       if (!current) return null
       if (modalOpen) {
         return (
@@ -325,7 +327,7 @@ export default class HelloWorld extends Component {
     })
     total = total.toFixed(2)
     const tax = (total * current.tax / 100).toFixed(2)
-    const tips = (total * (current.tips.type === '%' ? current.tips.value : (current.tips.value / current.total * 100).toFixed(2)) / 100).toFixed(2)
+    const tips = (total * (current.tips.type === '%' ? current.tips.value : (current.tips.value / current.before * 100).toFixed(2)) / 100).toFixed(2)
     current.taxTotal = tax
     current.tipsTotal = tips
     current.total = total
